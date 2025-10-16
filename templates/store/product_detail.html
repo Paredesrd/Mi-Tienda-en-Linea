@@ -1,0 +1,63 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+{{ product.name }}
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="mb-3">
+                <img id="main-image" src="{{ product.image.url }}" class="img-fluid rounded shadow-sm" alt="{{ product.name }}">
+            </div>
+            <div class="d-flex justify-content-start">
+                <img src="{{ product.image.url }}" class="img-thumbnail me-2" style="width: 100px; cursor: pointer;" onclick="document.getElementById('main-image').src=this.src">
+                {% for img in product.images_set.all %}
+                <img src="{{ img.image.url }}" class="img-thumbnail me-2" style="width: 100px; cursor: pointer;" onclick="document.getElementById('main-image').src=this.src">
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <h2>{{ product.name }}</h2>
+            <h3 class="text-primary">${{ product.price }}</h3>
+            <p class="text-muted"><strong>Marca:</strong> {{ product.brand.name }} | <strong>Categoría:</strong> {{ product.category.name }}</p>
+            <hr>
+            <p>
+                <strong>Tags:</strong>
+                {% for tag in product.tag_set.all %}
+                    <span class="badge bg-secondary">{{ tag.name }}</span>
+                {% empty %}
+                    <span>Sin tags</span>
+                {% endfor %}
+            </p>
+            <div class="mt-4">
+                <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary btn-lg">Añadir al Carrito</a>
+            </div>
+            </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="true">Descripción</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="information-tab" data-bs-toggle="tab" data-bs-target="#information" type="button" role="tab" aria-controls="information" aria-selected="false">Información</button>
+                </li>
+            </ul>
+            <div class="tab-content p-3 border border-top-0" id="myTabContent">
+                <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                    {{ product.description|safe }}
+                </div>
+                <div class="tab-pane fade" id="information" role="tabpanel" aria-labelledby="information-tab">
+                    {{ product.information|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

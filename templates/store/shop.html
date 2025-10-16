@@ -1,0 +1,94 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+Tienda
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title">Filtros</h4>
+                    <hr>
+
+                    <h5 class="mt-3">Categorías</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for category in categories %}
+                        <li class="list-group-item"><a href="/shop/?category={{ category.id }}" class="text-decoration-none text-dark">{{ category.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+
+                    <h5 class="mt-4">Marcas</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for brand in brands %}
+                        <li class="list-group-item"><a href="/shop/?brand={{ brand.id }}" class="text-decoration-none text-dark">{{ brand.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+
+                    <h5 class="mt-4">Precios</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for price in filter_prices %}
+                        <li class="list-group-item"><a href="/shop/?filter_price={{ price.id }}" class="text-decoration-none text-dark">{{ price.price }}</a></li>
+                        {% endfor %}
+                    </ul>
+
+                    <h5 class="mt-4">Colores</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for color in colors %}
+                        <li class="list-group-item">
+                            <a href="/shop/?color={{ color.id }}" class="text-decoration-none text-dark d-flex justify-content-between">
+                                <span>{{ color.name }}</span>
+                                <span class="badge" style="background-color: {{ color.code }}; border: 1px solid #ccc;">&nbsp;</span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <h2 class="mb-4">Todos los Productos</h2>
+
+            <div class="d-flex justify-content-end mb-3">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        Ordenar por
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item" href="/shop/?sort=name_asc">Nombre (A-Z)</a></li>
+                        <li><a class="dropdown-item" href="/shop/?sort=name_desc">Nombre (Z-A)</a></li>
+                        <li><a class="dropdown-item" href="/shop/?sort=price_asc">Precio (Menor a Mayor)</a></li>
+                        <li><a class="dropdown-item" href="/shop/?sort=price_desc">Precio (Mayor a Menor)</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/shop/?new_product=new">Nuevos</a></li>
+                        <li><a class="dropdown-item" href="/shop/?old_product=old">Antiguos</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for product in products %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <a href="{% url 'product_detail' product.id %}">
+                            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{% url 'product_detail' product.id %}" class="text-dark text-decoration-none">{{ product.name }}</a>
+                            </h5>
+                            <p class="card-text"><strong>Precio:</strong> ${{ product.price }}</p>
+                            <a href="{% url 'product_detail' product.id %}" class="btn btn-sm btn-outline-secondary">Ver Detalles</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

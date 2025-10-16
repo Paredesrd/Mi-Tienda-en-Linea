@@ -1,0 +1,89 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load cart_tag %}
+
+{% block title %}
+Checkout
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Checkout</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-7">
+                <h4>Detalles de Facturación</h4>
+                <hr>
+                <input type="hidden" name="payment_id" value="{{ payment.id }}">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="firstName" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="firstName" name="first_name" value="{{ request.user.first_name }}" readonly required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="lastName" class="form-label">Apellido</label>
+                        <input type="text" class="form-control" id="lastName" name="last_name" value="{{ request.user.last_name }}" readonly required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="country" class="form-label">País</label>
+                    <input type="text" class="form-control" id="country" name="country" required>
+                </div>
+                <div class="mb-3">
+                    <label for="address" class="form-label">Dirección</label>
+                    <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-5 mb-3">
+                        <label for="city" class="form-label">Ciudad</label>
+                        <input type="text" class="form-control" id="city" name="city" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="state" class="form-label">Estado/Provincia</label>
+                        <input type="text" class="form-control" id="state" name="state" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="postcode" class="form-label">Código Postal</label>
+                        <input type="text" class="form-control" id="postcode" name="postcode" required>
+                    </div>
+                </div>
+                 <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="phone" class="form-label">Teléfono</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ request.user.email }}" readonly required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <h4>Resumen de tu Pedido</h4>
+                <hr>
+                <ul class="list-group mb-3">
+                    {% for key,value in request.session.cart.items %}
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">{{ value.name }}</h6>
+                            <small class="text-muted">Cantidad: {{ value.quantity }}</small>
+                        </div>
+                        <span class="text-muted">${% widthratio value.price 1 value.quantity %}</span>
+                    </li>
+                    {% endfor %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <strong>Total (USD)</strong>
+                        <strong>${{ cart_total_amount }}</strong>
+                    </li>
+                </ul>
+                <div class="d-grid">
+                    <button class="btn btn-primary btn-lg" type="submit">Realizar Pedido</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock content %}

@@ -1,0 +1,79 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load cart_tag %}
+
+{% block title %}
+Carrito de Compras
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Tu Carrito de Compras</h2>
+
+    {% if request.session.cart %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Producto</th>
+                                    <th scope="col">Precio</th>
+                                    <th scope="col">Cantidad</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for key, item in request.session.cart.items %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ item.image }}" alt="{{ item.name }}" class="img-fluid rounded me-3" style="width: 100px;">
+                                            <div>
+                                                <h5 class="mb-0">{{ item.name }}</h5>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>${{ item.price }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <a href="{% url 'add_to_cart' item.product_id %}?next={{ request.path }}" class="btn btn-sm btn-outline-secondary me-1">+</a>
+                                            <input type="text" value="{{ item.quantity }}" class="form-control text-center" style="width: 50px;" readonly>
+                                            <a href="{% url 'remove_from_cart' item.product_id %}?next={{ request.path }}" class="btn btn-sm btn-outline-secondary ms-1">-</a>
+                                        </div>
+                                    </td>
+                                    <td>${% widthratio item.price 1 item.quantity %}</td>
+                                    <td>
+                                        <a href="{% url 'remove_from_cart' item.product_id %}?next={{ request.path }}&delete_all=true" class="btn btn-sm btn-danger">Eliminar</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-end">
+                    <h4>Subtotal: <span class="text-primary">${{ cart_total_amount }}</span></h4>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{% url 'shop' %}" class="btn btn-secondary">Seguir Comprando</a>
+                <form action="{% url 'checkout' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="amount" value="{{ cart_total_amount }}">
+                    <button type="submit" class="btn btn-primary">Proceder al Pago</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center" role="alert">
+        Tu carrito de compras está vacío. <a href="{% url 'shop' %}" class="alert-link">¡Empieza a comprar!</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}
